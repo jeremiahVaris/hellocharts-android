@@ -11,6 +11,10 @@ import android.graphics.Path;
 import android.graphics.PorterDuff.Mode;
 import android.graphics.Rect;
 import android.graphics.Shader;
+import android.os.Build;
+import android.text.Layout;
+import android.text.StaticLayout;
+import android.text.TextPaint;
 
 import lecho.lib.hellocharts.model.Line;
 import lecho.lib.hellocharts.model.LineChartData;
@@ -438,10 +442,12 @@ public class LineChartRenderer extends AbstractChartRenderer {
             return;
         }
 
-        final float labelWidth = labelPaint.measureText(labelBuffer, labelBuffer.length - numChars, numChars);
-        final int labelHeight = Math.abs(fontMetrics.ascent);
+        final float labelWidth = getLabelWidth(numChars);
         float left = rawX - labelWidth / 2 - labelMargin;
         float right = rawX + labelWidth / 2 + labelMargin;
+
+        StaticLayout staticLayout = getStaticLayout(left, right, numChars);
+        final int labelHeight = staticLayout.getHeight();
 
         float top;
         float bottom;
@@ -472,8 +478,53 @@ public class LineChartRenderer extends AbstractChartRenderer {
         }
 
         labelBackgroundRect.set(left, top, right, bottom);
-        drawLabelTextAndBackground(canvas, labelBuffer, labelBuffer.length - numChars, numChars,
-                line.getDarkenColor());
+        drawMultilineLabelTextAndBackground(canvas, staticLayout, line.getDarkenColor());
+    }
+
+    private float getLabelWidth(int numChars) {
+        if (new String(labelBuffer).contains("\n"))
+            return getLongestLineLength(labelBuffer);
+        else return labelPaint.measureText(labelBuffer, labelBuffer.length - numChars, numChars);
+    }
+
+    private float getLongestLineLength(char[] buffer) {
+        String[] lines = (new String(buffer)).split("\n");
+        float longestLength = 0;
+        for (String line : lines) {
+            float lineLength = labelPaint.measureText(line);
+            if (lineLength > longestLength) {
+                longestLength = lineLength;
+            }
+        }
+        return longestLength;
+    }
+
+    private StaticLayout getStaticLayout(float left, float right, int numChars) {
+
+        int labelTextWidth = (int) Math.ceil(right - left - labelMargin * 2);
+        Layout.Alignment alignment = Layout.Alignment.ALIGN_NORMAL;
+        Float spacingMult = 1f;
+        Float spacingAdd = 0f;
+
+        StaticLayout staticLayout;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            staticLayout = StaticLayout.Builder.obtain(
+                    new String(labelBuffer), labelBuffer.length - numChars, labelBuffer.length,
+                    new TextPaint(labelPaint),
+                    labelTextWidth)
+                    .setAlignment(alignment)
+                    .setLineSpacing(spacingAdd, spacingMult)
+                    .setIncludePad(false)
+                    .build();
+        } else {
+            staticLayout = new StaticLayout(
+                    new String(labelBuffer), labelBuffer.length - numChars, labelBuffer.length,
+                    new TextPaint(labelPaint),
+                    labelTextWidth, alignment,
+                    spacingMult, spacingAdd, false
+            );
+        }
+        return staticLayout;
     }
 
     private void drawArea(Canvas canvas, Line line) {

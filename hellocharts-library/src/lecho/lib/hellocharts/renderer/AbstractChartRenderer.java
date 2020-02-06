@@ -8,6 +8,7 @@ import android.graphics.Paint.Align;
 import android.graphics.Paint.FontMetricsInt;
 import android.graphics.RectF;
 import android.graphics.Typeface;
+import android.text.StaticLayout;
 
 import lecho.lib.hellocharts.computator.ChartComputator;
 import lecho.lib.hellocharts.model.ChartData;
@@ -122,6 +123,35 @@ public abstract class AbstractChartRenderer implements ChartRenderer {
         }
 
         canvas.drawText(labelBuffer, startIndex, numChars, textX, textY, labelPaint);
+    }
+
+    /**
+     * Draws multiline label text and label background if isValueLabelBackgroundEnabled is true.
+     */
+    protected void drawMultilineLabelTextAndBackground(Canvas canvas, StaticLayout staticLayout,
+                                                       int autoBackgroundColor) {
+        final float textX;
+        final float textY;
+
+        if (isValueLabelBackgroundEnabled) {
+
+            if (isValueLabelBackgroundAuto) {
+                labelBackgroundPaint.setColor(autoBackgroundColor);
+            }
+
+            canvas.drawRect(labelBackgroundRect, labelBackgroundPaint);
+
+            textX = labelBackgroundRect.left + labelMargin;
+            textY = labelBackgroundRect.bottom - labelMargin;
+        } else {
+            textX = labelBackgroundRect.left;
+            textY = labelBackgroundRect.bottom;
+        }
+
+        canvas.save();
+        canvas.translate(textX, labelBackgroundRect.top+labelMargin);
+        staticLayout.draw(canvas);
+        canvas.restore();
     }
 
     @Override
