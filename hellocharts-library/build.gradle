@@ -8,10 +8,11 @@ apply from: 'https://raw.github.com/chrisbanes/gradle-mvn-push/master/gradle-mvn
 
 buildscript {
     repositories {
-        mavenCentral()
+        jcenter()
+        google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.1.0'
+        classpath 'com.android.tools.build:gradle:3.5.0'
     }
 }
 
