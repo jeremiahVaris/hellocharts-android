@@ -230,7 +230,7 @@ public class LineChartActivity extends ActionBarActivity {
 
                 List<PointValue> values = new ArrayList<PointValue>();
                 for (int j = 0; j < numberOfPoints; ++j) {
-                    values.add(new PointValue(j, randomNumbersTab[i][j]).setLabel("Dorcas is\n a queen"));
+                    values.add(new PointValue(j, randomNumbersTab[i][j]));
                 }
 
                 Line line = new Line(values);

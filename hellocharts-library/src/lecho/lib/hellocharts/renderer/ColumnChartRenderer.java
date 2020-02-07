@@ -367,14 +367,14 @@ public class ColumnChartRenderer extends AbstractChartRenderer {
     }
 
     private void drawLabel(Canvas canvas, Column column, SubcolumnValue columnValue, boolean isStacked, float offset) {
-        final int numChars = column.getFormatter().formatChartValue(labelBuffer, columnValue);
+        labelSpannable = column.getFormatter().formatChartValue(columnValue);
 
-        if (numChars == 0) {
+        if (labelSpannable.length() == 0) {
             // No need to draw empty label
             return;
         }
 
-        final float labelWidth = labelPaint.measureText(labelBuffer, labelBuffer.length - numChars, numChars);
+        final float labelWidth = labelPaint.measureText(labelSpannable, 0,labelSpannable.length());
         final int labelHeight = Math.abs(fontMetrics.ascent);
         float left = drawRect.centerX() - labelWidth / 2 - labelMargin;
         float right = drawRect.centerX() + labelWidth / 2 + labelMargin;
@@ -414,7 +414,7 @@ public class ColumnChartRenderer extends AbstractChartRenderer {
         }
 
         labelBackgroundRect.set(left, top, right, bottom);
-        drawLabelTextAndBackground(canvas, labelBuffer, labelBuffer.length - numChars, numChars,
+        drawLabelTextAndBackground(canvas, labelSpannable, 0,labelSpannable.length(),
                 columnValue.getDarkenColor());
 
     }

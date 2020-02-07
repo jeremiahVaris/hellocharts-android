@@ -1,8 +1,10 @@
 package lecho.lib.hellocharts.formatter;
 
+import android.text.Spannable;
+
 import lecho.lib.hellocharts.model.BubbleValue;
 
 public interface BubbleChartValueFormatter {
 
-    public int formatChartValue(char[] formattedValue, BubbleValue value);
+    public Spannable formatChartValue(Spannable formattedValue, BubbleValue value);
 }

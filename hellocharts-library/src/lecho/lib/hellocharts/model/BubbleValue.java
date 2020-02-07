@@ -1,6 +1,7 @@
 package lecho.lib.hellocharts.model;
 
-import java.util.Arrays;
+import android.text.Spannable;
+import android.text.SpannableString;
 
 import lecho.lib.hellocharts.util.ChartUtils;
 import lecho.lib.hellocharts.view.Chart;
@@ -53,7 +54,7 @@ public class BubbleValue {
     private int color = ChartUtils.DEFAULT_COLOR;
     private int darkenColor = ChartUtils.DEFAULT_DARKEN_COLOR;
     private ValueShape shape = ValueShape.CIRCLE;
-    private char[] label;
+    private Spannable label;
 
     public BubbleValue() {
         set(0, 0, 0);
@@ -144,22 +145,27 @@ public class BubbleValue {
     }
 
     @Deprecated
-    public char[] getLabel() {
+    public Spannable getLabel() {
         return label;
     }
 
     public BubbleValue setLabel(String label) {
-        this.label = label.toCharArray();
+        this.label = new SpannableString(label);
         return this;
     }
 
-    public char[] getLabelAsChars() {
+    public BubbleValue setLabel(Spannable label) {
+        this.label = label;
+        return this;
+    }
+
+    public Spannable getLabelSpannable() {
         return label;
     }
 
     @Deprecated
     public BubbleValue setLabel(char[] label) {
-        this.label = label;
+        this.label = new SpannableString(new String(label));
         return this;
     }
 
@@ -186,7 +192,7 @@ public class BubbleValue {
         if (Float.compare(that.x, x) != 0) return false;
         if (Float.compare(that.y, y) != 0) return false;
         if (Float.compare(that.z, z) != 0) return false;
-        if (!Arrays.equals(label, that.label)) return false;
+        if (!label.equals( that.label)) return false;
         if (shape != that.shape) return false;
 
         return true;
@@ -206,7 +212,7 @@ public class BubbleValue {
         result = 31 * result + color;
         result = 31 * result + darkenColor;
         result = 31 * result + (shape != null ? shape.hashCode() : 0);
-        result = 31 * result + (label != null ? Arrays.hashCode(label) : 0);
+        result = 31 * result + (label != null ? label.hashCode() : 0);
         return result;
     }
 }

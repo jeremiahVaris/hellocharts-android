@@ -263,14 +263,14 @@ public class BubbleChartRenderer extends AbstractChartRenderer {
 
     private void drawLabel(Canvas canvas, BubbleValue bubbleValue, float rawX, float rawY) {
         final Rect contentRect = computator.getContentRectMinusAllMargins();
-        final int numChars = valueFormatter.formatChartValue(labelBuffer, bubbleValue);
+        labelSpannable = valueFormatter.formatChartValue(labelSpannable, bubbleValue);
 
-        if (numChars == 0) {
+        if (labelSpannable.length() == 0) {
             // No need to draw empty label
             return;
         }
 
-        final float labelWidth = labelPaint.measureText(labelBuffer, labelBuffer.length - numChars, numChars);
+        final float labelWidth = labelPaint.measureText(labelSpannable, 0,labelSpannable.length());
         final int labelHeight = Math.abs(fontMetrics.ascent);
         float left = rawX - labelWidth / 2 - labelMargin;
         float right = rawX + labelWidth / 2 + labelMargin;
@@ -295,7 +295,7 @@ public class BubbleChartRenderer extends AbstractChartRenderer {
         }
 
         labelBackgroundRect.set(left, top, right, bottom);
-        drawLabelTextAndBackground(canvas, labelBuffer, labelBuffer.length - numChars, numChars,
+        drawLabelTextAndBackground(canvas, labelSpannable, 0,labelSpannable.length(),
                 bubbleValue.getDarkenColor());
 
     }

@@ -1,6 +1,7 @@
 package lecho.lib.hellocharts.model;
 
-import java.util.Arrays;
+import android.text.Spannable;
+import android.text.SpannableString;
 
 /**
  * Single axis value, use it to manually set axis labels position. You can use label attribute to display text instead
@@ -8,14 +9,14 @@ import java.util.Arrays;
  */
 public class AxisValue {
     private float value;
-    private char[] label;
+    private Spannable label;
 
     public AxisValue(float value) {
         setValue(value);
     }
 
     @Deprecated
-    public AxisValue(float value, char[] label) {
+    public AxisValue(float value, Spannable label) {
         this.value = value;
         this.label = label;
     }
@@ -35,7 +36,7 @@ public class AxisValue {
     }
 
     @Deprecated
-    public char[] getLabel() {
+    public Spannable getLabel() {
         return label;
     }
 
@@ -45,11 +46,11 @@ public class AxisValue {
      * @param label
      */
     public AxisValue setLabel(String label) {
-        this.label = label.toCharArray();
+        this.label = new SpannableString(label);
         return this;
     }
 
-    public char[] getLabelAsChars() {
+    public Spannable getLabelSpannable() {
         return label;
     }
 
@@ -60,6 +61,10 @@ public class AxisValue {
      */
     @Deprecated
     public AxisValue setLabel(char[] label) {
+        this.label = new SpannableString(new String(label));
+        return this;
+    }
+    public AxisValue setLabel(Spannable label) {
         this.label = label;
         return this;
     }
@@ -72,7 +77,7 @@ public class AxisValue {
         AxisValue axisValue = (AxisValue) o;
 
         if (Float.compare(axisValue.value, value) != 0) return false;
-        if (!Arrays.equals(label, axisValue.label)) return false;
+        if (!label.equals(axisValue.label)) return false;
 
         return true;
     }
@@ -80,7 +85,7 @@ public class AxisValue {
     @Override
     public int hashCode() {
         int result = (value != +0.0f ? Float.floatToIntBits(value) : 0);
-        result = 31 * result + (label != null ? Arrays.hashCode(label) : 0);
+        result = 31 * result + (label != null ? label.hashCode() : 0);
         return result;
     }
 }

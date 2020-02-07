@@ -336,14 +336,14 @@ public class PieChartRenderer extends AbstractChartRenderer {
                 (float) (Math.sin(Math.toRadians(lastAngle + angle / 2))));
         normalizeVector(sliceVector);
 
-        final int numChars = valueFormatter.formatChartValue(labelBuffer, sliceValue);
+        labelSpannable = valueFormatter.formatChartValue( sliceValue);
 
-        if (numChars == 0) {
+        if (labelSpannable.length() == 0) {
             // No need to draw empty label
             return;
         }
 
-        final float labelWidth = labelPaint.measureText(labelBuffer, labelBuffer.length - numChars, numChars);
+        final float labelWidth = labelPaint.measureText(labelSpannable,0, labelSpannable.length());
         final int labelHeight = Math.abs(fontMetrics.ascent);
 
         final float centerX = originCircleOval.centerX();
@@ -395,7 +395,7 @@ public class PieChartRenderer extends AbstractChartRenderer {
         }
 
         labelBackgroundRect.set(left, top, right, bottom);
-        drawLabelTextAndBackground(canvas, labelBuffer, labelBuffer.length - numChars, numChars,
+        drawLabelTextAndBackground(canvas, labelSpannable,0, labelSpannable.length(),
                 sliceValue.getDarkenColor());
     }
 

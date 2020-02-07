@@ -1,6 +1,7 @@
 package lecho.lib.hellocharts.model;
 
-import java.util.Arrays;
+import android.text.Spannable;
+import android.text.SpannableString;
 
 import lecho.lib.hellocharts.view.Chart;
 
@@ -15,7 +16,7 @@ public class PointValue {
     private float originY;
     private float diffX;
     private float diffY;
-    private char[] label;
+    private Spannable label;
 
     public PointValue() {
         set(0, 0);
@@ -68,22 +69,26 @@ public class PointValue {
     }
 
     @Deprecated
-    public char[] getLabel() {
+    public Spannable getLabel() {
         return label;
     }
 
     public PointValue setLabel(String label) {
-        this.label = label.toCharArray();
+        this.label = new SpannableString(label);
+        return this;
+    }
+    public PointValue setLabel(Spannable label) {
+        this.label = label;
         return this;
     }
 
-    public char[] getLabelAsChars() {
+    public Spannable getLabelSpannable() {
         return label;
     }
 
     @Deprecated
     public PointValue setLabel(char[] label) {
-        this.label = label;
+        this.label = new SpannableString(new String(label));
         return this;
     }
 
@@ -105,7 +110,7 @@ public class PointValue {
         if (Float.compare(that.originY, originY) != 0) return false;
         if (Float.compare(that.x, x) != 0) return false;
         if (Float.compare(that.y, y) != 0) return false;
-        if (!Arrays.equals(label, that.label)) return false;
+        if (!label.equals(that.label)) return false;
 
         return true;
     }
@@ -118,7 +123,7 @@ public class PointValue {
         result = 31 * result + (originY != +0.0f ? Float.floatToIntBits(originY) : 0);
         result = 31 * result + (diffX != +0.0f ? Float.floatToIntBits(diffX) : 0);
         result = 31 * result + (diffY != +0.0f ? Float.floatToIntBits(diffY) : 0);
-        result = 31 * result + (label != null ? Arrays.hashCode(label) : 0);
+        result = 31 * result + (label != null ? label.hashCode() : 0);
         return result;
     }
 }

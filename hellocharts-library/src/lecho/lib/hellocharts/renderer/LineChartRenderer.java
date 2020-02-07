@@ -436,17 +436,17 @@ public class LineChartRenderer extends AbstractChartRenderer {
 
     private void drawLabel(Canvas canvas, Line line, PointValue pointValue, float rawX, float rawY, float offset) {
         final Rect contentRect = computator.getContentRectMinusAllMargins();
-        final int numChars = line.getFormatter().formatChartValue(labelBuffer, pointValue);
-        if (numChars == 0) {
+        labelSpannable = line.getFormatter().formatChartValue(pointValue);
+        if (labelSpannable.length() == 0) {
             // No need to draw empty label
             return;
         }
 
-        final float labelWidth = getLabelWidth(numChars);
+        final float labelWidth = getLabelWidth();
         float left = rawX - labelWidth / 2 - labelMargin;
         float right = rawX + labelWidth / 2 + labelMargin;
 
-        StaticLayout staticLayout = getStaticLayout(left, right, numChars);
+        StaticLayout staticLayout = getStaticLayout(left, right);
         final int labelHeight = staticLayout.getHeight();
 
         float top;
@@ -481,14 +481,14 @@ public class LineChartRenderer extends AbstractChartRenderer {
         drawMultilineLabelTextAndBackground(canvas, staticLayout, line.getDarkenColor());
     }
 
-    private float getLabelWidth(int numChars) {
-        if (new String(labelBuffer).contains("\n"))
-            return getLongestLineLength(labelBuffer);
-        else return labelPaint.measureText(labelBuffer, labelBuffer.length - numChars, numChars);
+    private float getLabelWidth() {
+        if (labelSpannable.toString().contains("\n"))
+            return getLongestLineLength(labelSpannable.toString());
+        else return labelPaint.measureText(labelSpannable, 0, labelSpannable.length());
     }
 
-    private float getLongestLineLength(char[] buffer) {
-        String[] lines = (new String(buffer)).split("\n");
+    private float getLongestLineLength(String buffer) {
+        String[] lines = buffer.split("\n");
         float longestLength = 0;
         for (String line : lines) {
             float lineLength = labelPaint.measureText(line);
@@ -499,7 +499,7 @@ public class LineChartRenderer extends AbstractChartRenderer {
         return longestLength;
     }
 
-    private StaticLayout getStaticLayout(float left, float right, int numChars) {
+    private StaticLayout getStaticLayout(float left, float right) {
 
         int labelTextWidth = (int) Math.ceil(right - left - labelMargin * 2);
         Layout.Alignment alignment = Layout.Alignment.ALIGN_NORMAL;
@@ -509,7 +509,7 @@ public class LineChartRenderer extends AbstractChartRenderer {
         StaticLayout staticLayout;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             staticLayout = StaticLayout.Builder.obtain(
-                    new String(labelBuffer), labelBuffer.length - numChars, labelBuffer.length,
+                    labelSpannable, 0, labelSpannable.length(),
                     new TextPaint(labelPaint),
                     labelTextWidth)
                     .setAlignment(alignment)
@@ -518,7 +518,7 @@ public class LineChartRenderer extends AbstractChartRenderer {
                     .build();
         } else {
             staticLayout = new StaticLayout(
-                    new String(labelBuffer), labelBuffer.length - numChars, labelBuffer.length,
+                    labelSpannable, 0, labelSpannable.length(),
                     new TextPaint(labelPaint),
                     labelTextWidth, alignment,
                     spacingMult, spacingAdd, false

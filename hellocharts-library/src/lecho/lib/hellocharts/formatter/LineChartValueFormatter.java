@@ -1,9 +1,11 @@
 package lecho.lib.hellocharts.formatter;
 
 
+import android.text.Spannable;
+
 import lecho.lib.hellocharts.model.PointValue;
 
 public interface LineChartValueFormatter {
 
-    public int formatChartValue(char[] formattedValue, PointValue value);
+    public Spannable formatChartValue(PointValue value);
 }

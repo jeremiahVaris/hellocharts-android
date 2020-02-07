@@ -1,5 +1,7 @@
 package lecho.lib.hellocharts.formatter;
 
+import android.text.Spannable;
+
 import lecho.lib.hellocharts.model.BubbleValue;
 
 
@@ -17,9 +19,9 @@ public class SimpleBubbleChartValueFormatter implements BubbleChartValueFormatte
     }
 
     @Override
-    public int formatChartValue(char[] formattedValue, BubbleValue value) {
-        return valueFormatterHelper.formatFloatValueWithPrependedAndAppendedText(formattedValue, value.getZ(), value
-                .getLabelAsChars());
+    public Spannable formatChartValue(Spannable formattedValue, BubbleValue value) {
+        return valueFormatterHelper.formatFloatValueWithPrependedAndAppendedText(value.getZ(), value
+                .getLabelSpannable());
     }
 
     public int getDecimalDigitsNumber() {

@@ -1,5 +1,7 @@
 package lecho.lib.hellocharts.formatter;
 
+import android.text.Spannable;
+
 import lecho.lib.hellocharts.model.SliceValue;
 
 
@@ -17,9 +19,9 @@ public class SimplePieChartValueFormatter implements PieChartValueFormatter {
     }
 
     @Override
-    public int formatChartValue(char[] formattedValue, SliceValue value) {
-        return valueFormatterHelper.formatFloatValueWithPrependedAndAppendedText(formattedValue, value.getValue(),
-                value.getLabelAsChars());
+    public Spannable formatChartValue(SliceValue value) {
+        return valueFormatterHelper.formatFloatValueWithPrependedAndAppendedText(value.getValue(),
+                value.getLabelSpannable());
     }
 
     public int getDecimalDigitsNumber() {

@@ -1,5 +1,7 @@
 package lecho.lib.hellocharts.formatter;
 
+import android.text.Spannable;
+
 import lecho.lib.hellocharts.model.SubcolumnValue;
 
 public class SimpleColumnChartValueFormatter implements ColumnChartValueFormatter {
@@ -16,9 +18,9 @@ public class SimpleColumnChartValueFormatter implements ColumnChartValueFormatte
     }
 
     @Override
-    public int formatChartValue(char[] formattedValue, SubcolumnValue value) {
-        return valueFormatterHelper.formatFloatValueWithPrependedAndAppendedText(formattedValue, value.getValue(),
-                value.getLabelAsChars());
+    public Spannable formatChartValue(SubcolumnValue value) {
+        return valueFormatterHelper.formatFloatValueWithPrependedAndAppendedText(value.getValue(),
+                value.getLabelSpannable());
     }
 
     public int getDecimalDigitsNumber() {

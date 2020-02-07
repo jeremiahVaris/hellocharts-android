@@ -1,6 +1,7 @@
 package lecho.lib.hellocharts.model;
 
-import java.util.Arrays;
+import android.text.Spannable;
+import android.text.SpannableString;
 
 import lecho.lib.hellocharts.util.ChartUtils;
 import lecho.lib.hellocharts.view.Chart;
@@ -15,7 +16,7 @@ public class SubcolumnValue {
     private float diff;
     private int color = ChartUtils.DEFAULT_COLOR;
     private int darkenColor = ChartUtils.DEFAULT_DARKEN_COLOR;
-    private char[] label;
+    private Spannable label;
 
     public SubcolumnValue() {
         setValue(0);
@@ -84,22 +85,27 @@ public class SubcolumnValue {
     }
 
     @Deprecated
-    public char[] getLabel() {
+    public Spannable getLabel() {
         return label;
     }
 
     public SubcolumnValue setLabel(String label) {
-        this.label = label.toCharArray();
+        this.label = new SpannableString(label);
         return this;
     }
 
-    public char[] getLabelAsChars() {
+    public SubcolumnValue setLabel(Spannable label) {
+        this.label = label;
+        return this;
+    }
+
+    public Spannable getLabelSpannable() {
         return label;
     }
 
     @Deprecated
     public SubcolumnValue setLabel(char[] label) {
-        this.label = label;
+        this.label = new SpannableString(new String(label));
         return this;
     }
 
@@ -120,7 +126,7 @@ public class SubcolumnValue {
         if (Float.compare(that.diff, diff) != 0) return false;
         if (Float.compare(that.originValue, originValue) != 0) return false;
         if (Float.compare(that.value, value) != 0) return false;
-        if (!Arrays.equals(label, that.label)) return false;
+        if (!label.equals(that.label)) return false;
 
         return true;
     }
@@ -132,7 +138,7 @@ public class SubcolumnValue {
         result = 31 * result + (diff != +0.0f ? Float.floatToIntBits(diff) : 0);
         result = 31 * result + color;
         result = 31 * result + darkenColor;
-        result = 31 * result + (label != null ? Arrays.hashCode(label) : 0);
+        result = 31 * result + (label != null ? label.hashCode() : 0);
         return result;
     }
 }

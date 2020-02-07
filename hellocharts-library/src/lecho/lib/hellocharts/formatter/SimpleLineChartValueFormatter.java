@@ -1,5 +1,7 @@
 package lecho.lib.hellocharts.formatter;
 
+import android.text.Spannable;
+
 import lecho.lib.hellocharts.model.PointValue;
 
 public class SimpleLineChartValueFormatter implements LineChartValueFormatter {
@@ -16,9 +18,9 @@ public class SimpleLineChartValueFormatter implements LineChartValueFormatter {
     }
 
     @Override
-    public int formatChartValue(char[] formattedValue, PointValue value) {
-        return valueFormatterHelper.formatFloatValueWithPrependedAndAppendedText(formattedValue, value.getY(), value
-                .getLabelAsChars());
+    public Spannable formatChartValue(PointValue value) {
+        return valueFormatterHelper.formatFloatValueWithPrependedAndAppendedText(value.getY(), value
+                .getLabelSpannable());
     }
 
     public int getDecimalDigitsNumber() {

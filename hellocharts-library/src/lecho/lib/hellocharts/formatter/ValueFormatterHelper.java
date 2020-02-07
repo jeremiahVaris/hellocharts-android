@@ -1,5 +1,7 @@
 package lecho.lib.hellocharts.formatter;
 
+import android.text.Spannable;
+import android.text.SpannableString;
 import android.util.Log;
 
 import java.text.DecimalFormat;
@@ -70,43 +72,45 @@ public class ValueFormatterHelper {
      * returns number of chars of formatted value. The formatted value starts at index [formattedValue.length -
      * charsNumber] and ends at index [formattedValue.length-1].
      * Note: If label is not null it will be used as formattedValue instead of float value.
-     * Note: Parameter defaultDigitsNumber is used only if you didn't change decimalDigintsNumber value using
+     * Note: Parameter defaultDigitsNumber is used only if you didn't change decimalDigitsNumber value using
      * method {@link #setDecimalDigitsNumber(int)}.
      */
-    public int formatFloatValueWithPrependedAndAppendedText(char[] formattedValue, float value, int
-            defaultDigitsNumber, char[] label) {
+    public Spannable formatFloatValueWithPrependedAndAppendedText(float value, int
+            defaultDigitsNumber, Spannable label) {
         if (null != label) {
             // If custom label is not null use only name characters as formatted value.
             // Copy label into formatted value array.
-            int labelLength = label.length;
-            if (labelLength > formattedValue.length) {
-                Log.w(TAG, "Label length is larger than buffer size(64chars), some chars will be skipped!");
-                labelLength = formattedValue.length;
+            int labelLength = label.length();
+            if (labelLength > 64) {
+                Log.w(TAG, "Label length is larger than buffer size (64chars), some chars will be skipped!");
+                labelLength = 64;
+                label = new SpannableString(label.toString().substring(0,64));
+
             }
-            System.arraycopy(label, 0, formattedValue, formattedValue.length - labelLength, labelLength);
-            return labelLength;
+            return label;
         }
 
         final int appliedDigitsNumber = getAppliedDecimalDigitsNumber(defaultDigitsNumber);
-        final int charsNumber = formatFloatValue(formattedValue, value, appliedDigitsNumber);
-        appendText(formattedValue);
-        prependText(formattedValue, charsNumber);
-        return charsNumber + getPrependedText().length + getAppendedText().length;
+        String labelString = formatFloatValue(value, appliedDigitsNumber);
+        int charsNumber = labelString.length();
+        labelString = appendText(labelString);
+        labelString = prependText(labelString, charsNumber);
+        return new SpannableString(labelString);
     }
 
     /**
-     * @see #formatFloatValueWithPrependedAndAppendedText(char[], float, int, char[])
+     * @see #formatFloatValueWithPrependedAndAppendedText(float, int, Spannable)
      */
-    public int formatFloatValueWithPrependedAndAppendedText(char[] formattedValue, float value, char[] label) {
-        return formatFloatValueWithPrependedAndAppendedText(formattedValue, value, DEFAULT_DIGITS_NUMBER, label);
+    public Spannable formatFloatValueWithPrependedAndAppendedText(float value, Spannable label) {
+        return formatFloatValueWithPrependedAndAppendedText( value, DEFAULT_DIGITS_NUMBER, label);
     }
 
     /**
-     * @see #formatFloatValueWithPrependedAndAppendedText(char[], float, int, char[])
+     * @see #formatFloatValueWithPrependedAndAppendedText( float, int, Spannable)
      */
-    public int formatFloatValueWithPrependedAndAppendedText(char[] formattedValue, float value, int
+    public Spannable formatFloatValueWithPrependedAndAppendedText(float value, int
             defaultDigitsNumber) {
-        return formatFloatValueWithPrependedAndAppendedText(formattedValue, value, defaultDigitsNumber, null);
+        return formatFloatValueWithPrependedAndAppendedText( value, defaultDigitsNumber, null);
     }
 
     public int formatFloatValue(char[] formattedValue, float value, int decimalDigitsNumber) {
@@ -115,11 +119,42 @@ public class ValueFormatterHelper {
                 decimalSeparator);
     }
 
+    public String formatFloatValue(float value, int decimalDigitsNumber) {
+        return String.format(
+                "%."+decimalDigitsNumber+"f",
+                        Double.parseDouble(String.valueOf(value))
+        );
+    }
+
     public void appendText(char[] formattedValue) {
         if (appendedText.length > 0) {
             System.arraycopy(appendedText, 0, formattedValue, formattedValue.length - appendedText.length,
                     appendedText.length);
         }
+    }
+
+    public String appendText(String formattedValue) {
+        if (appendedText.length > 0) {
+            if (appendedText.length+formattedValue.length()>64){
+                char[] resultCharArray = formattedValue.toCharArray();
+                System.arraycopy(appendedText, 0, resultCharArray, resultCharArray.length - appendedText.length,
+                        appendedText.length);
+                return new String(resultCharArray);
+            }
+                else return formattedValue+new String(appendedText);
+        } else return formattedValue;
+    }
+
+    public String prependText(String formattedValue, int charsNumber) {
+        if (prependedText.length > 0) {
+            if (prependedText.length+formattedValue.length()+appendedText.length>64){
+                char[] resultCharArray = formattedValue.toCharArray();
+                System.arraycopy(prependedText, 0, resultCharArray, resultCharArray.length - charsNumber - appendedText.length
+                        - prependedText.length, prependedText.length);
+                return new String(resultCharArray);
+            }
+            else return new String(prependedText) + formattedValue;
+        } else return formattedValue;
     }
 
     public void prependText(char[] formattedValue, int charsNumber) {

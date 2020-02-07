@@ -9,6 +9,8 @@ import android.graphics.Paint.FontMetricsInt;
 import android.graphics.Path;
 import android.graphics.RectF;
 import android.graphics.Typeface;
+import android.text.Spannable;
+import android.text.SpannableString;
 import android.text.StaticLayout;
 
 import lecho.lib.hellocharts.computator.ChartComputator;
@@ -48,6 +50,7 @@ public abstract class AbstractChartRenderer implements ChartRenderer {
     protected float density;
     protected float scaledDensity;
     protected SelectedValue selectedValue = new SelectedValue();
+    protected Spannable labelSpannable = new SpannableString("");
     protected char[] labelBuffer = new char[64];
     protected int labelOffset;
     protected int labelMargin;
@@ -105,7 +108,7 @@ public abstract class AbstractChartRenderer implements ChartRenderer {
     /**
      * Draws label text and label background if isValueLabelBackgroundEnabled is true.
      */
-    protected void drawLabelTextAndBackground(Canvas canvas, char[] labelBuffer, int startIndex, int numChars,
+    protected void drawLabelTextAndBackground(Canvas canvas, Spannable labelBuffer, int startIndex, int numChars,
                                               int autoBackgroundColor) {
         final float textX;
         final float textY;

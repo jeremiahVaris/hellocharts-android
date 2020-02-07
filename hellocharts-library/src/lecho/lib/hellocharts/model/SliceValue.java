@@ -1,6 +1,7 @@
 package lecho.lib.hellocharts.model;
 
-import java.util.Arrays;
+import android.text.Spannable;
+import android.text.SpannableString;
 
 import lecho.lib.hellocharts.util.ChartUtils;
 import lecho.lib.hellocharts.view.Chart;
@@ -36,7 +37,7 @@ public class SliceValue {
     /**
      * Custom label for this slice, if not set number formatting will be used.
      */
-    private char[] label;
+    private Spannable label;
 
     public SliceValue() {
         setValue(0);
@@ -121,22 +122,26 @@ public class SliceValue {
     }
 
     @Deprecated
-    public char[] getLabel() {
+    public Spannable getLabel() {
         return label;
     }
 
     @Deprecated
     public SliceValue setLabel(char[] label) {
+        this.label = new SpannableString(new String(label));
+        return this;
+    }
+    public SliceValue setLabel(Spannable label) {
         this.label = label;
         return this;
     }
 
     public SliceValue setLabel(String label) {
-        this.label = label.toCharArray();
+        this.label = new SpannableString(label);
         return this;
     }
 
-    public char[] getLabelAsChars() {
+    public Spannable getLabelSpannable() {
         return label;
     }
 
@@ -158,7 +163,7 @@ public class SliceValue {
         if (Float.compare(that.originValue, originValue) != 0) return false;
         if (sliceSpacing != that.sliceSpacing) return false;
         if (Float.compare(that.value, value) != 0) return false;
-        if (!Arrays.equals(label, that.label)) return false;
+        if (!label.equals(that.label)) return false;
 
         return true;
     }
@@ -171,7 +176,7 @@ public class SliceValue {
         result = 31 * result + color;
         result = 31 * result + darkenColor;
         result = 31 * result + sliceSpacing;
-        result = 31 * result + (label != null ? Arrays.hashCode(label) : 0);
+        result = 31 * result + (label != null ? label.hashCode() : 0);
         return result;
     }
 }
