@@ -36,6 +36,8 @@ public abstract class AbstractChartData implements ChartData {
      */
     protected int valueLabelBackgroundColor = ChartUtils.darkenColor(ChartUtils.DEFAULT_DARKEN_COLOR);
 
+    private int valueLabelBackgroundRadius=0;
+
     public AbstractChartData() {
 
     }
@@ -163,4 +165,13 @@ public abstract class AbstractChartData implements ChartData {
         this.valueLabelBackgroundColor = valueLabelBackgroundColor;
     }
 
+    @Override
+    public void setValueLabelBackgroundRadius(int valueLabelBackgroundRadius) {
+        this.valueLabelBackgroundRadius = valueLabelBackgroundRadius;
+    }
+
+    @Override
+    public int getValueLabelBackgroundRadius() {
+        return valueLabelBackgroundRadius;
+    }
 }

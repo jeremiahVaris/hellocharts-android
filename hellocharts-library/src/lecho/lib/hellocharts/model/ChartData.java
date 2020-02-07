@@ -131,4 +131,8 @@ public interface ChartData {
      * green.
      */
     public void setValueLabelBackgroundColor(int valueLabelBackgroundColor);
+
+    void setValueLabelBackgroundRadius(int valueLabelBackgroundRadius);
+
+    int getValueLabelBackgroundRadius();
 }
